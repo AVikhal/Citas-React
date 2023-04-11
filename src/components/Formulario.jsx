@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import Error from "./Error"
 
-const Formulario = ({pacientes, setPacientes, paciente}) => {
+const Formulario = ({pacientes, setPacientes, paciente, setPaciente}) => {
 
   const [ nombre, setNombre] = useState("")
   const [ propietario, setPropietario ] = useState("")
@@ -14,13 +14,14 @@ const Formulario = ({pacientes, setPacientes, paciente}) => {
   useEffect(() => {
     if(Object.keys(paciente).length>0){
       console.log("si hay algo")
+      setNombre(paciente.nombre)
+      setPropietario(paciente.propietario)
+      setEmail(paciente.email)
+      setAlta(paciente.alta)
+      setSintomas(paciente.sintomas)
     }
     
-    setNombre(paciente.nombre)
-    setPropietario(paciente.propietario)
-    setEmail(paciente.email)
-    setAlta(paciente.alta)
-    setSintomas(paciente.sintomas)
+   
 
   },[paciente])
 
@@ -51,8 +52,24 @@ const Formulario = ({pacientes, setPacientes, paciente}) => {
           sintomas,
           id: generarId()
         }
+       
+      if(paciente.id) {
+        //Editando paciente
+        objetoPaciente.id = paciente.id
+        console.log(objetoPaciente)
+        console.log(paciente)
+        const pacientesActualizados = pacientes.map((eachPaciente) => eachPaciente.id === paciente.id ? objetoPaciente : eachPaciente
+        )
 
+        setPacientes(pacientesActualizados)
+        setPaciente({})
+
+      } else {
+        //Nuevo registro
+        objetoPaciente.id = generarId()
         setPacientes([...pacientes, objetoPaciente])
+      }
+
         setNombre("")
         setPropietario("")
         setEmail("")
@@ -110,7 +127,7 @@ const Formulario = ({pacientes, setPacientes, paciente}) => {
             <input 
               type="submit"
               className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-all"
-              value="Agregar Paciente" 
+              value={ paciente.id ? "Editar Paciente" : "Agregar Paciente"} 
             />
           </form>
     </div>
